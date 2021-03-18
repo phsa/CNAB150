@@ -41,7 +41,7 @@ namespace CNAB150
             header.Append(remittanceCode);
             header.Append(bankAgreementCode.Fit(20, ' ', bankAgreementCode.PadRight));
             header.Append(businessUnitName.Fit(20, ' ', businessUnitName.PadRight));
-            header.Append(strBankCode.Fit(3, '0', strBankCode.PadLeft)); // CHECAR SE 33.ToString().Length > 3 => EXCEÇÃO
+            header.Append(strBankCode.Fit(3, '0', strBankCode.PadLeft)); // CHECK IF 33.ToString().Length > 3 => EXCEPTION
             header.Append(bankName.Fit(20, ' ', bankName.PadRight));
             header.Append(formattedCnabCreationDate.Fit(8, '0', formattedCnabCreationDate.PadLeft));
             header.Append(strSequencialCnabFileNumber.Fit(6, '0', strSequencialCnabFileNumber.PadLeft));
@@ -54,18 +54,46 @@ namespace CNAB150
 
         private static string MainRecords()
         {
-            string recordTypeCode = "G";
+            char recordTypeCode = 'G';
+            string accountToBeCredited = "0123 00012345-0";
+            DateTime paymentDate = DateTime.Now;
+            string formattedPaymentDate = paymentDate.ToString("yyyyMMdd");
+            DateTime creditDate = DateTime.Now;
+            string formattedCreditDate = creditDate.ToString("yyyyMMdd");
+            string barcode = "85860000000600003282105707082105139388749347"; // CHECK IF barcode.Length == 44 => EXCEPTION
+            double amountReceived = 150.5387890;
+            string normalizedAmountReceived = amountReceived.Normalize();
+            double fareAmount = 2.00;
+            string normalizedFareAmount = fareAmount.Normalize();
+            int recordSequencialNumber = 1;
+            string strRecordSequencialNumber = recordSequencialNumber.ToString();
+            string collectionAgencyCode = "722";
+            char collectionMethod = '1'; // CREATE A ENUM BASED ON CHAR VALUES
+            string transactionCode = "238ef6ad";
+            int paymentMethod = 3; // CREATE A ENUM FOR [1, 2, 3] = [CASH, CHECK, UNIDENTIFIED]
             string filler = string.Empty.PadRight(9, ' ');
 
             StringBuilder record = new StringBuilder();
-
+            record.Append(recordTypeCode);
+            record.Append(accountToBeCredited.Fit(20, ' ', accountToBeCredited.PadRight)); // CHECK IF IT IS BETTER TO RETURN TO INDEPENDENT METHOS FILLATEND/FILLATSTART
+            record.Append(formattedPaymentDate.Fit(8, '0', formattedPaymentDate.PadLeft));
+            record.Append(formattedCreditDate.Fit(8, '0', formattedPaymentDate.PadLeft));
+            record.Append(barcode);
+            record.Append(normalizedAmountReceived.Fit(12, '0', normalizedAmountReceived.PadLeft)); // 9(10)V99 MEANS 10 PLACES FOR THE INTEGER PART AND 2 FOR DECIMALS PLACES
+            record.Append(normalizedFareAmount.Fit(7, '0', normalizedFareAmount.PadLeft)); // 9(5)V99 MEANS 10 PLACES FOR THE INTEGER PART AND 2 FOR DECIMALS PLACES
+            record.Append(strRecordSequencialNumber.Fit(8, '0', strRecordSequencialNumber.PadLeft));
+            record.Append(collectionAgencyCode.Fit(8, ' ', collectionAgencyCode.PadRight));
+            record.Append(collectionMethod);
+            record.Append(transactionCode.Fit(23, ' ', transactionCode.PadRight));
+            record.Append(paymentMethod);
+            record.Append(filler);
 
             return record.ToString();
         }
 
         private static string Trailler()
         {
-            string recordTypeCode = "Z";
+            char recordTypeCode = 'Z';
             int numOfRecords = 3;
             string strNumOfRecord = numOfRecords.ToString();
             int totalValue = 150;
