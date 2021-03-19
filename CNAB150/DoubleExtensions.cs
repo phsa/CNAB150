@@ -2,9 +2,10 @@
 {
     public static class DoubleExtensions
     {
-        public static string Normalize(this double d)
+        public static string ToStandardizedString(this double d, int lenghtLimit, char charToFill, Func<string, int, char, string> fillingMode)
         {
-            return ((int)(100 * d)).ToString();
+            string noFloatPoint = ((int)(100 * d)).ToString();
+            return noFloatPoint.Fit(lenghtLimit, charToFill, fillingMode);
         }
     }
 }

@@ -2,7 +2,7 @@
 {
     public static class StringExtensions
     {
-        public static string Fit(this string str, int lenghtLimit, char charToFill, Func<int, char, string> fillingMode)
+        public static string Fit(this string str, int lenghtLimit, char charToFill, Func<string, int, char, string> fillingMethod)
         {
             if (str.Length > lenghtLimit)
             {
@@ -10,7 +10,7 @@
             }
             else if (str.Length < lenghtLimit)
             {
-                return fillingMode(lenghtLimit, charToFill);
+                return fillingMethod(str, lenghtLimit, charToFill);
             }
             else
             {
