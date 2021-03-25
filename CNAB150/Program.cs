@@ -21,7 +21,7 @@ namespace CNAB150
 
         private static string Header()
         {
-            CnabRecordRule rule1X = new CnabRecordRule
+            CnabRecordRule rule1X = new CnabRecordRule // THIS SHOULD BE STRICT RULE, THE LENGTH SHOULD BE EXACT
             {
                 Length = 1,
                 AllowedCharacters = "0-9a-zA-Z",
@@ -30,7 +30,7 @@ namespace CNAB150
                 TruncationMethodType = TruncationMethodType.RemoveAtEnd,
             };
 
-            CnabRecordRule rule19 = new CnabRecordRule
+            CnabRecordRule rule19 = new CnabRecordRule // THIS SHOULD BE STRICT RULE, THE LENGTH SHOULD BE EXACT
             {
                 Length = 1,
                 AllowedCharacters = "0-9",
@@ -93,32 +93,28 @@ namespace CNAB150
                 TruncationMethodType = TruncationMethodType.RemoveAtEnd,
             };
 
-            string recordTypeCode = "A";
+            char recordTypeCode = 'A';
             int remittanceCode = 0;
             string bankAgreementCode = "CÓDIGO DE CONVÊNIO";
             string businessUnitName = "FITBANK PAGAMENTOS ELETRÔNICOS SA";
             int bankCode = 33;
-            string strBankCode = bankCode.ToString();
             string bankName = "BANCO SANTANDER";
             DateTime cnabCreationDate = DateTime.Now;
-            string formattedCnabCreationDate = cnabCreationDate.ToString("yyyyMMdd"); // FIND A WAY TO PUT THE FORMATING IN THE RULE AND NOT HERE
             int sequencialCnabFileNumber = 1;
-            string strSequencialCnabFileNumber = sequencialCnabFileNumber.ToString();
             int cnabLayoutVersion = 1;
-            string strCnabLayoutVersion = cnabLayoutVersion.ToString();
             string barcodePhrase = "CÓDIGO DE BARRAS";
             int filled = rule1X.Length + rule19.Length + rule20X.Length + rule20X.Length + rule39.Length + rule20X.Length + rule89.Length + rule69.Length + rule29.Length + rule17X.Length;
 
             StringBuilder header = new StringBuilder();
-            header.Append(rule1X.Apply(recordTypeCode));
+            header.Append(rule1X.Apply(recordTypeCode.ToString()));
             header.Append(rule19.Apply(remittanceCode.ToString()));
             header.Append(rule20X.Apply(bankAgreementCode));
             header.Append(rule20X.Apply(businessUnitName));
-            header.Append(rule39.Apply(strBankCode)); // CHECK IF 33.ToString().Length > 3 => EXCEPTION
+            header.Append(rule39.Apply(bankCode.ToString()));
             header.Append(rule20X.Apply(bankName));
-            header.Append(rule89.Apply(formattedCnabCreationDate));
-            header.Append(rule69.Apply(strSequencialCnabFileNumber));
-            header.Append(rule29.Apply(strCnabLayoutVersion));
+            header.Append(rule89.Apply(cnabCreationDate.ToString("yyyyMMdd")));// FIND A WAY TO PUT THE FORMATING IN THE RULE AND NOT HERE
+            header.Append(rule69.Apply(sequencialCnabFileNumber.ToString()));
+            header.Append(rule29.Apply(cnabLayoutVersion.ToString()));
             header.Append(rule17X.Apply(barcodePhrase));
             header.Append(string.Empty.PadRight(LayoutCharLimit - filled, ' '));
 
@@ -217,7 +213,7 @@ namespace CNAB150
                 TruncationMethodType = TruncationMethodType.NotAllowed, // SHOULDN'T ALLOW FILLING
             };
 
-            string recordTypeCode = "G";
+            char recordTypeCode = 'G';
             string accountToBeCredited = "0123 00012345-0";
             DateTime paymentDate = DateTime.Now;
             string formattedPaymentDate = paymentDate.ToString("yyyyMMdd"); // FIND A WAY TO PUT THE FORMATING IN THE RULE AND NOT HERE
@@ -229,14 +225,14 @@ namespace CNAB150
             int recordSequencialNumber = 1;
             string strRecordSequencialNumber = recordSequencialNumber.ToString();
             string collectionAgencyCode = "722";
-            char collectionMethod = '1'; // CREATE A ENUM BASED ON CHAR VALUES
+            char collectionMethod = '1'; // CREATE AN ENUM BASED ON CHAR VALUES
             string transactionCode = "238EF6AD";
             int paymentMethod = 3; // CREATE A ENUM FOR [1, 2, 3] = [CASH, CHECK, UNIDENTIFIED]
             int filled = rule1X.Length + rule20X.Length + rule89.Length + rule89.Length + rule44X.Length + rule129.Length + rule79.Length + rule89.Length + rule8X.Length + rule1XCustom.Length + rule23X.Length + rule19Custom.Length;
             string filler = string.Empty.PadRight(LayoutCharLimit - filled, ' ');
 
             StringBuilder record = new StringBuilder();
-            record.Append(rule1X.Apply(recordTypeCode));
+            record.Append(rule1X.Apply(recordTypeCode.ToString()));
             record.Append(rule20X.Apply(accountToBeCredited));
             record.Append(rule89.Apply(formattedPaymentDate));
             record.Append(rule89.Apply(formattedCreditDate));
@@ -283,7 +279,7 @@ namespace CNAB150
             };
 
 
-            string recordTypeCode = "Z";
+            char recordTypeCode = 'Z';
             int numOfRecords = 3;
             string strNumOfRecord = numOfRecords.ToString();
             int totalValue = 150;
@@ -291,7 +287,7 @@ namespace CNAB150
             int filled = rule1X.Length + rule69.Length + rule179.Length;
 
             StringBuilder trailler = new StringBuilder();
-            trailler.Append(rule1X.Apply(recordTypeCode));
+            trailler.Append(rule1X.Apply(recordTypeCode.ToString()));
             trailler.Append(rule69.Apply(strNumOfRecord));
             trailler.Append(rule179.Apply(strTotalValue));
             trailler.Append(string.Empty.PadRight(LayoutCharLimit - filled, ' '));
