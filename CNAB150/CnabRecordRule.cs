@@ -82,7 +82,7 @@ namespace CNAB150
                 {
                     TruncationMethodType.RemoveAtStart => StringUtils.TruncateFromEnd,
                     TruncationMethodType.RemoveAtEnd => StringUtils.TruncateFromStart,
-                    TruncationMethodType.LeaveMiddle => StringUtils.TruncateAtSides,
+                    TruncationMethodType.KeepMiddle => StringUtils.TruncateAtSides,
                     TruncationMethodType.NotAllowed => null,
                     _ => null,
                 };
@@ -113,7 +113,7 @@ namespace CNAB150
             {
                 if (_truncationMethod == null)
                 {
-                    throw new Exception($"The string \'{str}\' is bigger than rule {_length} char limit and the rule doesn't allow truncation.");
+                    throw new Exception($"The string \'{str}\' is bigger than rule {_length} char limit and it doesn't allow truncation.");
                 }
                 return _truncationMethod(str, _length);
             }

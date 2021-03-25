@@ -5,6 +5,6 @@
         NotAllowed = 0,
         RemoveAtEnd = 1,
         RemoveAtStart = 2,
-        LeaveMiddle = 3,
+        KeepMiddle = 3,
     }
 }
