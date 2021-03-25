@@ -20,6 +20,78 @@ namespace CNAB150
 
         private static string Header()
         {
+            CnabRecordRule rule1X = new CnabRecordRule
+            {
+                Length = 1,
+                AllowedCharacters = "0-9a-zA-Z",
+                FillingChar = ' ',
+                FillAtEnd = true,
+            };
+
+            CnabRecordRule rule19 = new CnabRecordRule
+            {
+                Length = 1,
+                AllowedCharacters = "0-9",
+                FillingChar = '0',
+                FillAtEnd = false,
+            };
+
+            CnabRecordRule rule20X = new CnabRecordRule
+            {
+                Length = 20,
+                AllowedCharacters = "0-9a-zA-Z\\s",
+                FillingChar = ' ',
+                FillAtEnd = true,
+            };
+
+            CnabRecordRule rule39 = new CnabRecordRule
+            {
+                Length = 3,
+                AllowedCharacters = "0-9",
+                FillingChar = '0',
+                FillAtEnd = false,
+            };
+
+            CnabRecordRule rule89 = new CnabRecordRule
+            {
+                Length = 8,
+                AllowedCharacters = "0-9",
+                FillingChar = '0',
+                FillAtEnd = false,
+            };
+
+            CnabRecordRule rule69 = new CnabRecordRule
+            {
+                Length = 6,
+                AllowedCharacters = "0-9",
+                FillingChar = '0',
+                FillAtEnd = false,
+            };
+
+            CnabRecordRule rule29 = new CnabRecordRule
+            {
+                Length = 2,
+                AllowedCharacters = "0-9",
+                FillingChar = '0',
+                FillAtEnd = false,
+            };
+
+            CnabRecordRule rule17X = new CnabRecordRule
+            {
+                Length = 17,
+                AllowedCharacters = "0-9a-zA-Z\\s",
+                FillingChar = ' ',
+                FillAtEnd = true,
+            };
+
+            CnabRecordRule ruleFiller = new CnabRecordRule
+            {
+                Length = 52,
+                AllowedCharacters = "0-9a-zA-Z\\s",
+                FillingChar = ' ',
+                FillAtEnd = true,
+            };
+
             string recordTypeCode = "A";
             int remittanceCode = 0;
             string bankAgreementCode = "CÓDIGO DE CONVÊNIO";
@@ -34,20 +106,19 @@ namespace CNAB150
             int cnabLayoutVersion = 1;
             string strCnabLayoutVersion = cnabLayoutVersion.ToString();
             string barcodePhrase = "CÓDIGO DE BARRAS";
-            string filler = string.Empty.PadRight(52, ' ');
 
             StringBuilder header = new StringBuilder();
-            header.Append(recordTypeCode);
-            header.Append(remittanceCode);
-            header.Append(bankAgreementCode.Fit(20, ' ', StringUtils.FillAtEnd));
-            header.Append(businessUnitName.Fit(20, ' ', StringUtils.FillAtEnd));
-            header.Append(strBankCode.Fit(3, '0', StringUtils.FillAtStart)); // CHECK IF 33.ToString().Length > 3 => EXCEPTION
-            header.Append(bankName.Fit(20, ' ', StringUtils.FillAtEnd));
-            header.Append(formattedCnabCreationDate.Fit(8, '0', StringUtils.FillAtStart));
-            header.Append(strSequencialCnabFileNumber.Fit(6, '0', StringUtils.FillAtStart));
-            header.Append(strCnabLayoutVersion.Fit(2, '0', StringUtils.FillAtStart));
-            header.Append(barcodePhrase.Fit(17, ' ', StringUtils.FillAtEnd));
-            header.Append(filler);
+            header.Append(rule1X.Apply(recordTypeCode));
+            header.Append(rule19.Apply(remittanceCode.ToString()));
+            header.Append(rule20X.Apply(bankAgreementCode));
+            header.Append(rule20X.Apply(businessUnitName));
+            header.Append(rule39.Apply(strBankCode)); // CHECK IF 33.ToString().Length > 3 => EXCEPTION
+            header.Append(rule20X.Apply(bankName));
+            header.Append(rule89.Apply(formattedCnabCreationDate));
+            header.Append(rule69.Apply(strSequencialCnabFileNumber));
+            header.Append(rule29.Apply(strCnabLayoutVersion));
+            header.Append(rule17X.Apply(barcodePhrase));
+            header.Append(ruleFiller.Apply(string.Empty));
 
             return header.ToString();
         }
@@ -91,18 +162,50 @@ namespace CNAB150
 
         private static string Trailler()
         {
-            char recordTypeCode = 'Z';
+            CnabRecordRule rule1X = new CnabRecordRule
+            {
+                Length = 1,
+                AllowedCharacters = "0-9a-zA-Z",
+                FillingChar = ' ',
+                FillAtEnd = true,
+            };
+
+            CnabRecordRule rule69 = new CnabRecordRule
+            {
+                Length = 6,
+                AllowedCharacters = "0-9",
+                FillingChar = '0',
+                FillAtEnd = false,
+            };
+
+            CnabRecordRule rule179 = new CnabRecordRule
+            {
+                Length = 17,
+                AllowedCharacters = "0-9",
+                FillingChar = '0',
+                FillAtEnd = false,
+            };
+
+            CnabRecordRule ruleFiller = new CnabRecordRule
+            {
+                Length = 126,
+                AllowedCharacters = "0-9a-zA-Z\\s",
+                FillingChar = ' ',
+                FillAtEnd = true,
+            };
+
+
+            string recordTypeCode = "Z";
             int numOfRecords = 3;
             string strNumOfRecord = numOfRecords.ToString();
             int totalValue = 150;
             string strTotalValue = totalValue.ToString();
-            string filler = string.Empty.PadRight(126, ' ');
 
             StringBuilder trailler = new StringBuilder();
-            trailler.Append(recordTypeCode);
-            trailler.Append(strNumOfRecord.Fit(6, '0', StringUtils.FillAtStart));
-            trailler.Append(strTotalValue.Fit(17, '0', StringUtils.FillAtStart));
-            trailler.Append(string.Empty.PadRight(150 - trailler.Length, ' '));
+            trailler.Append(rule1X.Apply(recordTypeCode));
+            trailler.Append(rule69.Apply(strNumOfRecord));
+            trailler.Append(rule179.Apply(strTotalValue));
+            trailler.Append(ruleFiller.Apply(string.Empty));
 
             return trailler.ToString();
         }

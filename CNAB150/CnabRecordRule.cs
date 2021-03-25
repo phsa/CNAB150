@@ -7,8 +7,8 @@ namespace CNAB150
     {
         public int Length { get; set; }
         public string AllowedCharacters { get; set; }
-        public char FillingChar { get; set; }
         public string Description { get; set; }
+        public char FillingChar { get; set; }
         public bool FillAtEnd { get; set; }
 
         private Regex Expression
@@ -36,7 +36,9 @@ namespace CNAB150
 
         public string Apply(string str)
         {
-            return str.Fit(Length, FillingChar, FillingMethod); //ADD ALLOWED CHARACTERS CHECK [REPLACE OR REMOVE METHODS]
+            //ADD ALLOWED CHARACTERS CHECK [REPLACE OR REMOVE METHODS]
+            //ADD TRUNCATE METHODS [REMOVE AT END, AT START, AT BOTH METHODS (THROW AN EXCEPTION)]
+            return str.Fit(Length, FillingChar, FillingMethod); 
         }
 
         public bool Check(string str)
