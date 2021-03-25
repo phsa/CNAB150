@@ -26,6 +26,7 @@ namespace CNAB150
                 AllowedCharacters = "0-9a-zA-Z",
                 FillingChar = ' ',
                 FillAtEnd = true,
+                TruncationMethodType = TruncationMethodType.RemoveAtEnd,
             };
 
             CnabRecordRule rule19 = new CnabRecordRule
@@ -34,6 +35,7 @@ namespace CNAB150
                 AllowedCharacters = "0-9",
                 FillingChar = '0',
                 FillAtEnd = false,
+                TruncationMethodType = TruncationMethodType.RemoveAtEnd,
             };
 
             CnabRecordRule rule20X = new CnabRecordRule
@@ -42,6 +44,7 @@ namespace CNAB150
                 AllowedCharacters = "0-9a-zA-Z\\s",
                 FillingChar = ' ',
                 FillAtEnd = true,
+                TruncationMethodType = TruncationMethodType.RemoveAtEnd,
             };
 
             CnabRecordRule rule39 = new CnabRecordRule
@@ -50,6 +53,7 @@ namespace CNAB150
                 AllowedCharacters = "0-9",
                 FillingChar = '0',
                 FillAtEnd = false,
+                TruncationMethodType = TruncationMethodType.RemoveAtEnd,
             };
 
             CnabRecordRule rule89 = new CnabRecordRule
@@ -58,6 +62,7 @@ namespace CNAB150
                 AllowedCharacters = "0-9",
                 FillingChar = '0',
                 FillAtEnd = false,
+                TruncationMethodType = TruncationMethodType.RemoveAtEnd,
             };
 
             CnabRecordRule rule69 = new CnabRecordRule
@@ -66,6 +71,7 @@ namespace CNAB150
                 AllowedCharacters = "0-9",
                 FillingChar = '0',
                 FillAtEnd = false,
+                TruncationMethodType = TruncationMethodType.RemoveAtEnd,
             };
 
             CnabRecordRule rule29 = new CnabRecordRule
@@ -74,6 +80,7 @@ namespace CNAB150
                 AllowedCharacters = "0-9",
                 FillingChar = '0',
                 FillAtEnd = false,
+                TruncationMethodType = TruncationMethodType.RemoveAtEnd,
             };
 
             CnabRecordRule rule17X = new CnabRecordRule
@@ -82,6 +89,7 @@ namespace CNAB150
                 AllowedCharacters = "0-9a-zA-Z\\s",
                 FillingChar = ' ',
                 FillAtEnd = true,
+                TruncationMethodType = TruncationMethodType.RemoveAtEnd,
             };
 
             CnabRecordRule ruleFiller = new CnabRecordRule
@@ -90,6 +98,7 @@ namespace CNAB150
                 AllowedCharacters = "0-9a-zA-Z\\s",
                 FillingChar = ' ',
                 FillAtEnd = true,
+                TruncationMethodType = TruncationMethodType.RemoveAtEnd,
             };
 
             string recordTypeCode = "A";
@@ -138,7 +147,7 @@ namespace CNAB150
             string strRecordSequencialNumber = recordSequencialNumber.ToString();
             string collectionAgencyCode = "722";
             char collectionMethod = '1'; // CREATE A ENUM BASED ON CHAR VALUES
-            string transactionCode = "238ef6ad";
+            string transactionCode = "238EF6AD";
             int paymentMethod = 3; // CREATE A ENUM FOR [1, 2, 3] = [CASH, CHECK, UNIDENTIFIED]
             string filler = string.Empty.PadRight(9, ' ');
 
@@ -168,6 +177,7 @@ namespace CNAB150
                 AllowedCharacters = "0-9a-zA-Z",
                 FillingChar = ' ',
                 FillAtEnd = true,
+                TruncationMethodType = TruncationMethodType.RemoveAtEnd,
             };
 
             CnabRecordRule rule69 = new CnabRecordRule
@@ -176,6 +186,7 @@ namespace CNAB150
                 AllowedCharacters = "0-9",
                 FillingChar = '0',
                 FillAtEnd = false,
+                TruncationMethodType = TruncationMethodType.RemoveAtEnd,
             };
 
             CnabRecordRule rule179 = new CnabRecordRule
@@ -184,6 +195,7 @@ namespace CNAB150
                 AllowedCharacters = "0-9",
                 FillingChar = '0',
                 FillAtEnd = false,
+                TruncationMethodType = TruncationMethodType.RemoveAtEnd,
             };
 
             CnabRecordRule ruleFiller = new CnabRecordRule
@@ -192,6 +204,7 @@ namespace CNAB150
                 AllowedCharacters = "0-9a-zA-Z\\s",
                 FillingChar = ' ',
                 FillAtEnd = true,
+                TruncationMethodType = TruncationMethodType.RemoveAtEnd,
             };
 
 
