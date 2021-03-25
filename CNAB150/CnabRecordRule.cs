@@ -5,40 +5,80 @@ namespace CNAB150
 {
     class CnabRecordRule
     {
-        public int Length { get; set; }
-        public string AllowedCharacters { get; set; }
-        public string Description { get; set; }
-        public char FillingChar { get; set; }
-        public bool FillAtEnd { get; set; }
-        public TruncationMethodType TruncationMethodType { get; set; }
+        private int _length;
+        private string _allowedCharacters;
+        private Regex _expression;
+        private char _fillingChar;
+        private bool _fillAtEnd;
+        private Func<string, int, char, string> _fillingMethod;
+        private TruncationMethodType _truncationMethodType;
+        private Func<string, int, string> _truncationMethod;
 
-        private Regex Expression
+        public string Description { get; set; }
+        public int Length
         {
             get
             {
-                string pattern = $"^[{FillingChar}{AllowedCharacters}]{{{Length},{Length}}}$";
-                return new Regex(pattern);
+                return _length;
+            }
+            set
+            {
+                _length = value;
+                UpdateRegularExpression();
             }
         }
-        private Func<string, int, char, string> FillingMethod
+        public string AllowedCharacters
         {
             get
             {
-                if (FillAtEnd)
+                return _allowedCharacters;
+            }
+            set
+            {
+                _allowedCharacters = value;
+                UpdateRegularExpression();
+            }
+        }
+        public char FillingChar
+        {
+            get
+            {
+                return _fillingChar;
+            }
+            set
+            {
+                _fillingChar = value;
+                UpdateRegularExpression();
+            }
+        }
+        public bool FillAtEnd {
+            get
+            {
+                return _fillAtEnd;
+            }
+            set
+            {
+                _fillAtEnd = value;
+                if (value)
                 {
-                    return StringUtils.FillAtEnd;
+                    _fillingMethod = StringUtils.FillAtEnd;
                 }
                 else
                 {
-                    return StringUtils.FillAtStart;
+                    _fillingMethod = StringUtils.FillAtStart;
                 }
-            }
+            } 
         }
-        private Func<string, int, string> TruncationMethod
+        public TruncationMethodType TruncationMethodType
         {
             get
             {
-                return TruncationMethodType switch
+                return _truncationMethodType;
+            }
+            set
+            {
+                _truncationMethodType = value;
+                _truncationMethod = value switch
                 {
                     TruncationMethodType.RemoveAtStart => StringUtils.TruncateFromEnd,
                     TruncationMethodType.RemoveAtEnd => StringUtils.TruncateFromStart,
@@ -58,22 +98,28 @@ namespace CNAB150
 
         public bool Check(string str)
         {
-            return Expression.IsMatch(str);
+            return _expression.IsMatch(str);
+        }
+
+        private void UpdateRegularExpression()
+        {
+            string pattern = $"^[{_fillingChar}{_allowedCharacters}]{{{_length},{_length}}}$";
+            _expression = new Regex(pattern);
         }
 
         private string Fit(string str)
         {
-            if (str.Length > Length)
+            if (str.Length > _length)
             {
-                if (TruncationMethod == null)
+                if (_truncationMethod == null)
                 {
-                    throw new Exception($"The string \'{str}\' is bigger than rule {Length} char limit and the rule doesn't allow truncation.");
+                    throw new Exception($"The string \'{str}\' is bigger than rule {_length} char limit and the rule doesn't allow truncation.");
                 }
-                return TruncationMethod(str, Length);
+                return _truncationMethod(str, _length);
             }
-            else if (str.Length < Length)
+            else if (str.Length < _length)
             {
-                return FillingMethod(str, Length, FillingChar);
+                return _fillingMethod(str, _length, _fillingChar);
             }
             else
             {
