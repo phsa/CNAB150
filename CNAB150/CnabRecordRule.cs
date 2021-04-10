@@ -3,16 +3,20 @@ using System.Text.RegularExpressions;
 
 namespace CNAB150
 {
-    class CnabRecordRule
+
+    public delegate string Truncate(string str, int length);
+    public delegate string Fill(string str, int lengthLimit, char fillerChar);
+
+    public class CnabRecordRule
     {
         private int _length;
         private string _allowedCharacters;
         private Regex _expression;
         private char _fillingChar;
         private bool _fillAtEnd;
-        private Func<string, int, char, string> _fillingMethod;
+        private Fill _fillingMethod;
         private TruncationMethodType _truncationMethodType;
-        private Func<string, int, string> _truncationMethod;
+        private Truncate _truncationMethod;
 
         public string Description { get; set; }
         public int Length

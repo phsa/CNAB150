@@ -2,14 +2,14 @@
 {
     public static class StringUtils
     {
-        public static string FillAtEnd(string str, int lengthLimit, char charToFill)
+        public static string FillAtEnd(string str, int lengthLimit, char fillerChar)
         {
-            return str.PadRight(lengthLimit, charToFill);
+            return str.PadRight(lengthLimit, fillerChar);
         }
 
-        public static string FillAtStart(string str, int lengthLimit, char charToFill)
+        public static string FillAtStart(string str, int lengthLimit, char fillerChar)
         {
-            return str.PadLeft(lengthLimit, charToFill);
+            return str.PadLeft(lengthLimit, fillerChar);
         }
 
         public static string TruncateFromStart(string str, int length)

@@ -10,89 +10,21 @@ namespace CNAB150
         private const string fileName = "teste.REM";
         private const int LayoutCharLimit = 150;
 
-        static void Main(string[] args)
+        static void Main()
         {
+            CnabRecordLayout headerLayout = new CnabRecordLayout(LayoutCharLimit, CnabSeeder.HeaderRules, "Header");
+            CnabRecordLayout detailLayout = new CnabRecordLayout(LayoutCharLimit, CnabSeeder.DetailRules, "Details");
+            CnabRecordLayout traillerLayout = new CnabRecordLayout(LayoutCharLimit, CnabSeeder.TraillerRules, "Trailler");
+
             string path = Path.Combine(foldersPath, fileName);
             using StreamWriter writer = new StreamWriter(path);
-            writer.WriteLine(Header());
-            writer.WriteLine(MainRecords());
-            writer.Write(Trailler());
+            writer.WriteLine(Header(headerLayout));
+            writer.WriteLine(MainRecords(detailLayout));
+            writer.Write(Trailler(traillerLayout));
         }
 
-        private static string Header()
+        private static string Header(CnabRecordLayout headerLayout)
         {
-            CnabRecordRule rule1X = new CnabRecordRule // THIS SHOULD BE STRICT RULE, THE LENGTH SHOULD BE EXACT
-            {
-                Length = 1,
-                AllowedCharacters = "0-9a-zA-Z",
-                FillingChar = ' ',
-                FillAtEnd = true,
-                TruncationMethodType = TruncationMethodType.RemoveAtEnd,
-            };
-
-            CnabRecordRule rule19 = new CnabRecordRule // THIS SHOULD BE STRICT RULE, THE LENGTH SHOULD BE EXACT
-            {
-                Length = 1,
-                AllowedCharacters = "0-9",
-                FillingChar = '0',
-                FillAtEnd = false,
-                TruncationMethodType = TruncationMethodType.NotAllowed,
-            };
-
-            CnabRecordRule rule20X = new CnabRecordRule
-            {
-                Length = 20,
-                AllowedCharacters = "0-9a-zA-Z\\s",
-                FillingChar = ' ',
-                FillAtEnd = true,
-                TruncationMethodType = TruncationMethodType.RemoveAtEnd,
-            };
-
-            CnabRecordRule rule39 = new CnabRecordRule
-            {
-                Length = 3,
-                AllowedCharacters = "0-9",
-                FillingChar = '0',
-                FillAtEnd = false,
-                TruncationMethodType = TruncationMethodType.NotAllowed,
-            };
-
-            CnabRecordRule rule89 = new CnabRecordRule
-            {
-                Length = 8,
-                AllowedCharacters = "0-9",
-                FillingChar = '0',
-                FillAtEnd = false,
-                TruncationMethodType = TruncationMethodType.RemoveAtEnd,
-            };
-
-            CnabRecordRule rule69 = new CnabRecordRule
-            {
-                Length = 6,
-                AllowedCharacters = "0-9",
-                FillingChar = '0',
-                FillAtEnd = false,
-                TruncationMethodType = TruncationMethodType.NotAllowed,
-            };
-
-            CnabRecordRule rule29 = new CnabRecordRule
-            {
-                Length = 2,
-                AllowedCharacters = "0-9",
-                FillingChar = '0',
-                FillAtEnd = false,
-                TruncationMethodType = TruncationMethodType.NotAllowed,
-            };
-
-            CnabRecordRule rule17X = new CnabRecordRule
-            {
-                Length = 17,
-                AllowedCharacters = "0-9a-zA-Z\\s",
-                FillingChar = ' ',
-                FillAtEnd = true,
-                TruncationMethodType = TruncationMethodType.RemoveAtEnd,
-            };
-
             char recordTypeCode = 'A';
             int remittanceCode = 0;
             string bankAgreementCode = "CÓDIGO DE CONVÊNIO";
@@ -103,116 +35,25 @@ namespace CNAB150
             int sequencialCnabFileNumber = 1;
             int cnabLayoutVersion = 1;
             string barcodePhrase = "CÓDIGO DE BARRAS";
-            int filled = rule1X.Length + rule19.Length + rule20X.Length + rule20X.Length + rule39.Length + rule20X.Length + rule89.Length + rule69.Length + rule29.Length + rule17X.Length;
-
+            
             StringBuilder header = new StringBuilder();
-            header.Append(rule1X.Apply(recordTypeCode.ToString()));
-            header.Append(rule19.Apply(remittanceCode.ToString()));
-            header.Append(rule20X.Apply(bankAgreementCode));
-            header.Append(rule20X.Apply(businessUnitName));
-            header.Append(rule39.Apply(bankCode.ToString()));
-            header.Append(rule20X.Apply(bankName));
-            header.Append(rule89.Apply(cnabCreationDate.ToString("yyyyMMdd")));// FIND A WAY TO PUT THE FORMATING IN THE RULE AND NOT HERE
-            header.Append(rule69.Apply(sequencialCnabFileNumber.ToString()));
-            header.Append(rule29.Apply(cnabLayoutVersion.ToString()));
-            header.Append(rule17X.Apply(barcodePhrase));
-            header.Append(string.Empty.PadRight(LayoutCharLimit - filled, ' '));
+            header.Append(headerLayout.ApplyNextRule(recordTypeCode.ToString()));
+            header.Append(headerLayout.ApplyNextRule(remittanceCode.ToString()));
+            header.Append(headerLayout.ApplyNextRule(bankAgreementCode));
+            header.Append(headerLayout.ApplyNextRule(businessUnitName));
+            header.Append(headerLayout.ApplyNextRule(bankCode.ToString()));
+            header.Append(headerLayout.ApplyNextRule(bankName));
+            header.Append(headerLayout.ApplyNextRule(cnabCreationDate.ToString("yyyyMMdd")));// FIND A WAY TO PUT THE FORMATING IN THE RULE INSTEAD OF HERE
+            header.Append(headerLayout.ApplyNextRule(sequencialCnabFileNumber.ToString()));
+            header.Append(headerLayout.ApplyNextRule(cnabLayoutVersion.ToString()));
+            header.Append(headerLayout.ApplyNextRule(barcodePhrase));
+            header.Append(headerLayout.Filler);
 
             return header.ToString();
         }
 
-        private static string MainRecords()
+        private static string MainRecords(CnabRecordLayout detailLayout)
         {
-            CnabRecordRule rule1X = new CnabRecordRule
-            {
-                Length = 1, // THIS SHOULD BE STRICT RULE, THE LENGTH SHOULD BE EXACT
-                AllowedCharacters = "G",
-                FillingChar = ' ',
-                FillAtEnd = true,
-                TruncationMethodType = TruncationMethodType.NotAllowed, // SHOULDN'T ALLOW FILLING
-            };
-
-            CnabRecordRule rule20X = new CnabRecordRule
-            {
-                Length = 20,
-                AllowedCharacters = @"0-9a-zA-Z\s-/",
-                FillingChar = ' ',
-                FillAtEnd = true,
-                TruncationMethodType = TruncationMethodType.RemoveAtEnd,
-            };
-
-            CnabRecordRule rule89 = new CnabRecordRule
-            {
-                Length = 8, // THIS SHOULD BE STRICT RULE, THE LENGTH SHOULD BE EXACT
-                AllowedCharacters = "0-9",
-                FillingChar = '0',
-                FillAtEnd = false,
-                TruncationMethodType = TruncationMethodType.NotAllowed, // SHOULDN'T ALLOW FILLING
-            };
-
-            CnabRecordRule rule44X = new CnabRecordRule
-            {
-                Length = 44, // THIS SHOULD BE STRICT RULE, THE LENGTH SHOULD BE EXACT
-                AllowedCharacters = "0-9a-zA-Z\\s",
-                FillingChar = ' ',
-                FillAtEnd = true,
-                TruncationMethodType = TruncationMethodType.NotAllowed, // SHOULDN'T ALLOW FILLING
-            };
-
-            CnabRecordRule rule129 = new CnabRecordRule
-            {
-                Length = 12,
-                AllowedCharacters = "0-9",
-                FillingChar = '0',
-                FillAtEnd = false,
-                TruncationMethodType = TruncationMethodType.NotAllowed,
-            };
-
-            CnabRecordRule rule79 = new CnabRecordRule
-            {
-                Length = 7,
-                AllowedCharacters = "0-9",
-                FillingChar = '0',
-                FillAtEnd = false,
-                TruncationMethodType = TruncationMethodType.NotAllowed,
-            };
-
-            CnabRecordRule rule8X = new CnabRecordRule
-            {
-                Length = 8,
-                AllowedCharacters = "0-9a-zA-Z",
-                FillingChar = ' ',
-                FillAtEnd = true,
-                TruncationMethodType = TruncationMethodType.RemoveAtEnd,
-            };
-
-            CnabRecordRule rule1XCustom = new CnabRecordRule
-            {
-                Length = 1, // THIS SHOULD BE STRICT RULE, THE LENGTH SHOULD BE EXACT
-                AllowedCharacters = "1-6a-f",
-                FillingChar = ' ',
-                FillAtEnd = true,
-                TruncationMethodType = TruncationMethodType.NotAllowed, // SHOULDN'T ALLOW FILLING
-            };
-
-            CnabRecordRule rule23X = new CnabRecordRule
-            {
-                Length = 23,
-                AllowedCharacters = "0-9a-zA-Z",
-                FillingChar = ' ',
-                FillAtEnd = true,
-                TruncationMethodType = TruncationMethodType.RemoveAtEnd,
-            };
-
-            CnabRecordRule rule19Custom = new CnabRecordRule
-            {
-                Length = 1, // THIS SHOULD BE STRICT RULE, THE LENGTH SHOULD BE EXACT
-                AllowedCharacters = "123",
-                FillingChar = '0',
-                FillAtEnd = false,
-                TruncationMethodType = TruncationMethodType.NotAllowed, // SHOULDN'T ALLOW FILLING
-            };
-
             char recordTypeCode = 'G';
             string accountToBeCredited = "0123 00012345-0";
             DateTime paymentDate = DateTime.Now;
@@ -228,69 +69,38 @@ namespace CNAB150
             char collectionMethod = '1'; // CREATE AN ENUM BASED ON CHAR VALUES
             string transactionCode = "238EF6AD";
             int paymentMethod = 3; // CREATE A ENUM FOR [1, 2, 3] = [CASH, CHECK, UNIDENTIFIED]
-            int filled = rule1X.Length + rule20X.Length + rule89.Length + rule89.Length + rule44X.Length + rule129.Length + rule79.Length + rule89.Length + rule8X.Length + rule1XCustom.Length + rule23X.Length + rule19Custom.Length;
-            string filler = string.Empty.PadRight(LayoutCharLimit - filled, ' ');
 
             StringBuilder record = new StringBuilder();
-            record.Append(rule1X.Apply(recordTypeCode.ToString()));
-            record.Append(rule20X.Apply(accountToBeCredited));
-            record.Append(rule89.Apply(formattedPaymentDate));
-            record.Append(rule89.Apply(formattedCreditDate));
-            record.Append(rule44X.Apply(barcode));
-            record.Append(rule129.Apply(amountReceived.ToStandardizedString())); // 9(10)V99 MEANS 10 PLACES FOR THE INTEGER PART AND 2 FOR DECIMALS PLACES
-            record.Append(rule79.Apply(fareAmount.ToStandardizedString())); // 9(5)V99 MEANS 10 PLACES FOR THE INTEGER PART AND 2 FOR DECIMALS PLACES
-            record.Append(rule89.Apply(strRecordSequencialNumber));
-            record.Append(rule8X.Apply(collectionAgencyCode));
-            record.Append(rule1XCustom.Apply(collectionMethod.ToString()));
-            record.Append(rule23X.Apply(transactionCode));
-            record.Append(rule19Custom.Apply(paymentMethod.ToString()));
-            record.Append(filler);
+            record.Append(detailLayout.ApplyNextRule(recordTypeCode.ToString()));
+            record.Append(detailLayout.ApplyNextRule(accountToBeCredited));
+            record.Append(detailLayout.ApplyNextRule(formattedPaymentDate));
+            record.Append(detailLayout.ApplyNextRule(formattedCreditDate));
+            record.Append(detailLayout.ApplyNextRule(barcode));
+            record.Append(detailLayout.ApplyNextRule(amountReceived.ToStandardizedString())); // 9(10)V99 MEANS 10 PLACES FOR THE INTEGER PART AND 2 FOR DECIMALS PLACES
+            record.Append(detailLayout.ApplyNextRule(fareAmount.ToStandardizedString())); // 9(5)V99 MEANS 10 PLACES FOR THE INTEGER PART AND 2 FOR DECIMALS PLACES
+            record.Append(detailLayout.ApplyNextRule(strRecordSequencialNumber));
+            record.Append(detailLayout.ApplyNextRule(collectionAgencyCode));
+            record.Append(detailLayout.ApplyNextRule(collectionMethod.ToString()));
+            record.Append(detailLayout.ApplyNextRule(transactionCode));
+            record.Append(detailLayout.ApplyNextRule(paymentMethod.ToString()));
+            record.Append(detailLayout.Filler);
 
             return record.ToString();
         }
 
-        private static string Trailler()
+        private static string Trailler(CnabRecordLayout traillerLayout)
         {
-            CnabRecordRule rule1X = new CnabRecordRule
-            {
-                Length = 1,
-                AllowedCharacters = "0-9a-zA-Z",
-                FillingChar = ' ',
-                FillAtEnd = true,
-                TruncationMethodType = TruncationMethodType.RemoveAtEnd,
-            };
-
-            CnabRecordRule rule69 = new CnabRecordRule
-            {
-                Length = 6,
-                AllowedCharacters = "0-9",
-                FillingChar = '0',
-                FillAtEnd = false,
-                TruncationMethodType = TruncationMethodType.RemoveAtEnd,
-            };
-
-            CnabRecordRule rule179 = new CnabRecordRule
-            {
-                Length = 17,
-                AllowedCharacters = "0-9",
-                FillingChar = '0',
-                FillAtEnd = false,
-                TruncationMethodType = TruncationMethodType.RemoveAtEnd,
-            };
-
-
             char recordTypeCode = 'Z';
             int numOfRecords = 3;
             string strNumOfRecord = numOfRecords.ToString();
             int totalValue = 150;
             string strTotalValue = totalValue.ToString();
-            int filled = rule1X.Length + rule69.Length + rule179.Length;
 
             StringBuilder trailler = new StringBuilder();
-            trailler.Append(rule1X.Apply(recordTypeCode.ToString()));
-            trailler.Append(rule69.Apply(strNumOfRecord));
-            trailler.Append(rule179.Apply(strTotalValue));
-            trailler.Append(string.Empty.PadRight(LayoutCharLimit - filled, ' '));
+            trailler.Append(traillerLayout.ApplyNextRule(recordTypeCode.ToString()));
+            trailler.Append(traillerLayout.ApplyNextRule(strNumOfRecord));
+            trailler.Append(traillerLayout.ApplyNextRule(strTotalValue));
+            trailler.Append(traillerLayout.Filler);
 
             return trailler.ToString();
         }
