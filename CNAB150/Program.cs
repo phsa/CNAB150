@@ -35,21 +35,21 @@ namespace CNAB150
             int sequencialCnabFileNumber = 1;
             int cnabLayoutVersion = 1;
             string barcodePhrase = "CÓDIGO DE BARRAS";
-            
-            StringBuilder header = new StringBuilder();
-            header.Append(headerLayout.ApplyNextRule(recordTypeCode.ToString()));
-            header.Append(headerLayout.ApplyNextRule(remittanceCode.ToString()));
-            header.Append(headerLayout.ApplyNextRule(bankAgreementCode));
-            header.Append(headerLayout.ApplyNextRule(businessUnitName));
-            header.Append(headerLayout.ApplyNextRule(bankCode.ToString()));
-            header.Append(headerLayout.ApplyNextRule(bankName));
-            header.Append(headerLayout.ApplyNextRule(cnabCreationDate.ToString("yyyyMMdd")));// FIND A WAY TO PUT THE FORMATING IN THE RULE INSTEAD OF HERE
-            header.Append(headerLayout.ApplyNextRule(sequencialCnabFileNumber.ToString()));
-            header.Append(headerLayout.ApplyNextRule(cnabLayoutVersion.ToString()));
-            header.Append(headerLayout.ApplyNextRule(barcodePhrase));
-            header.Append(headerLayout.Filler);
 
-            return header.ToString();
+            string[] values = new string[] {
+                    recordTypeCode.ToString(),
+                    remittanceCode.ToString(),
+                    bankAgreementCode,
+                    businessUnitName,
+                    bankCode.ToString(),
+                    bankName,
+                    cnabCreationDate.ToString("yyyyMMdd"),
+                    sequencialCnabFileNumber.ToString(),
+                    cnabLayoutVersion.ToString(),
+                    barcodePhrase
+                };
+
+            return headerLayout.BuildFrom(values);
         }
 
         private static string MainRecords(CnabRecordLayout detailLayout)
@@ -70,22 +70,23 @@ namespace CNAB150
             string transactionCode = "238EF6AD";
             int paymentMethod = 3; // CREATE A ENUM FOR [1, 2, 3] = [CASH, CHECK, UNIDENTIFIED]
 
-            StringBuilder record = new StringBuilder();
-            record.Append(detailLayout.ApplyNextRule(recordTypeCode.ToString()));
-            record.Append(detailLayout.ApplyNextRule(accountToBeCredited));
-            record.Append(detailLayout.ApplyNextRule(formattedPaymentDate));
-            record.Append(detailLayout.ApplyNextRule(formattedCreditDate));
-            record.Append(detailLayout.ApplyNextRule(barcode));
-            record.Append(detailLayout.ApplyNextRule(amountReceived.ToStandardizedString())); // 9(10)V99 MEANS 10 PLACES FOR THE INTEGER PART AND 2 FOR DECIMALS PLACES
-            record.Append(detailLayout.ApplyNextRule(fareAmount.ToStandardizedString())); // 9(5)V99 MEANS 10 PLACES FOR THE INTEGER PART AND 2 FOR DECIMALS PLACES
-            record.Append(detailLayout.ApplyNextRule(strRecordSequencialNumber));
-            record.Append(detailLayout.ApplyNextRule(collectionAgencyCode));
-            record.Append(detailLayout.ApplyNextRule(collectionMethod.ToString()));
-            record.Append(detailLayout.ApplyNextRule(transactionCode));
-            record.Append(detailLayout.ApplyNextRule(paymentMethod.ToString()));
-            record.Append(detailLayout.Filler);
+            string[] values = new string[]
+            {
+                recordTypeCode.ToString(),
+                accountToBeCredited,
+                formattedPaymentDate,
+                formattedCreditDate,
+                barcode,
+                amountReceived.ToStandardizedString(),
+                fareAmount.ToStandardizedString(),
+                strRecordSequencialNumber,
+                collectionAgencyCode,
+                collectionMethod.ToString(),
+                transactionCode,
+                paymentMethod.ToString()
+            };
 
-            return record.ToString();
+            return detailLayout.BuildFrom(values);
         }
 
         private static string Trailler(CnabRecordLayout traillerLayout)
@@ -96,13 +97,13 @@ namespace CNAB150
             int totalValue = 150;
             string strTotalValue = totalValue.ToString();
 
-            StringBuilder trailler = new StringBuilder();
-            trailler.Append(traillerLayout.ApplyNextRule(recordTypeCode.ToString()));
-            trailler.Append(traillerLayout.ApplyNextRule(strNumOfRecord));
-            trailler.Append(traillerLayout.ApplyNextRule(strTotalValue));
-            trailler.Append(traillerLayout.Filler);
+            string[] values = new string[] {
+                recordTypeCode.ToString(),
+                strNumOfRecord,
+                strTotalValue
+            };
 
-            return trailler.ToString();
+            return traillerLayout.BuildFrom(values);
         }
     }
 }

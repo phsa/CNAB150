@@ -117,7 +117,7 @@ namespace CNAB150
             {
                 if (_truncationMethod == null)
                 {
-                    throw new Exception($"The string \'{str}\' is bigger than rule {_length} char limit and it doesn't allow truncation.");
+                    throw new Exception($"The string \'{str}\' is bigger than rule {_length} char limit and it doesn't allow truncation."); // USE CUSTOMIZED EXCEPTIONS
                 }
                 return _truncationMethod(str, _length);
             }

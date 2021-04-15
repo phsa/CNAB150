@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Linq;
+using System.Text;
 
 namespace CNAB150
 {
-    class CnabRecordLayout
+    public class CnabRecordLayout
     {
         private readonly int _length;
         private readonly CnabRecordRule[] _rules;
@@ -19,7 +20,7 @@ namespace CNAB150
             _rules = rules;
             int filledLength = FilledLength();
             if (_length < filledLength)
-                throw new Exception($"Set of cnab rules has invalid sum of length limit (filledLength = {filledLength}, recordLimit = {length})");
+                throw new Exception($"Set of cnab rules has invalid sum of length limit (filledLength = {filledLength}, recordLimit = {length})"); // USE CUSTOMIZED EXCEPTIONS
         }
 
         public CnabRecordLayout(int length, CnabRecordRule[] rules, char filler, string description) : this(length, rules, filler)
@@ -40,9 +41,39 @@ namespace CNAB150
             return NextRule().Apply(value);
         }
 
+
+        public string BuildFrom(string[] values)
+        {
+            if (_rules.Length == values.Length)
+            {
+                int nextBackup = _next;
+                Reset();
+
+                StringBuilder record = new StringBuilder();
+                foreach (string value in values)
+                {
+                    record.Append(NextRule().Apply(value));
+                }
+                record.Append(Filler);
+
+                _next = nextBackup;
+
+                return record.ToString();
+            }
+            else
+            {
+                throw new Exception($"Incompatible number of values ({values.Length}). [number of rules = {_rules.Length}]"); // USE CUSTOMIZED EXCEPTIONS
+            }
+        }
+
+        private void Reset()
+        {
+            _next = 0;
+        }
+
         private bool HasNext()
         {
-            return (_next < _length);
+            return _next < _rules.Length;
         }
 
         private int FilledLength()
@@ -52,7 +83,7 @@ namespace CNAB150
 
         private CnabRecordRule NextRule()
         {
-            return HasNext() ? _rules[_next++] : null;
+            return HasNext() ? _rules[_next++] : throw new Exception($"There was no rule left."); // USE CUSTOMIZED EXCEPTIONS;
         }
 
     }
