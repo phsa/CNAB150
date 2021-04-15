@@ -12,9 +12,9 @@ namespace CNAB150
 
         static void Main()
         {
-            CnabRecordLayout headerLayout = new CnabRecordLayout(LayoutCharLimit, CnabSeeder.HeaderRules, "Header");
-            CnabRecordLayout detailLayout = new CnabRecordLayout(LayoutCharLimit, CnabSeeder.DetailRules, "Details");
-            CnabRecordLayout traillerLayout = new CnabRecordLayout(LayoutCharLimit, CnabSeeder.TraillerRules, "Trailler");
+            CnabRecordLayout headerLayout = new CnabRecordLayout(LayoutCharLimit, CnabSeeder.HeaderRules, ' ', "Header");
+            CnabRecordLayout detailLayout = new CnabRecordLayout(LayoutCharLimit, CnabSeeder.DetailRules, ' ', "Details");
+            CnabRecordLayout traillerLayout = new CnabRecordLayout(LayoutCharLimit, CnabSeeder.TraillerRules, ' ', "Trailler");
 
             string path = Path.Combine(foldersPath, fileName);
             using StreamWriter writer = new StreamWriter(path);
